@@ -24,14 +24,25 @@ while True:
     cv2.equalizeHist(gray,gray)
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
     for (x,y,w,h) in faces:
+    
         cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),3)
-        ids,confidence = recognizer.predict(gray[y:y+h,x:x+w])
+        #print("w:%d,h:%d" % (w,h))
+        
+        #if w < 150 or h < 150:
+        #    img_ex = cv2.resize(img, (2*cols, 2*rows), interpolation=cv2.INTER_CUBIC)
+        
+        face = gray[y:y+h,x:x+w]
+        if w < 150 or h < 150:
+            face = cv2.resize(face, (300, 300), interpolation=cv2.INTER_CUBIC)
+            print("w:%d,h:%d" % (w,h))
+            
+        ids,confidence = recognizer.predict(face)
         c.execute("select name from users where id = (?);", (ids,))
         result = c.fetchall()
         name = result[0][0]
         if confidence < 50:
             #cv2.putText(img, name, (x+2,y+h-5), cv2.FONT_HERSHEY_SIMPLEX, 1, (150,255,0),2)
-            
+            print("w:%d,h:%d" % (w,h))
             result = "confidence:%.2f, %s" % (confidence, name)
             cv2_im = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             pil_im = Image.fromarray(cv2_im)
