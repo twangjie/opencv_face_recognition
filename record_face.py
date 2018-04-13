@@ -24,6 +24,7 @@ sampleNum = 0
 while True:
 	ret, img = cap.read()
 	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	cv2.equalizeHist(gray,gray)
 	faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 	for (x,y,w,h) in faces:
 		sampleNum = sampleNum+1
